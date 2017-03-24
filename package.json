@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Just assume it's okay\" && exit 1",
     "preinstall": "rm -rf node_modules && npm cache clean",
-    "heroku-prebuild": "rm -rf node_modules && npm cache clean"
+    "heroku-prebuild": "rm -rf node_modules && npm cache clean",
+	"start": "node bot.js"
   },
   "keywords": [
     "srifqi",
