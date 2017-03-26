@@ -1,6 +1,6 @@
 {
   "name": "srifqiBot",
-  "version": "0.1",
+  "version": "0.1.0",
   "description": "srifqi's Bot for Telegram App",
   "main": "bot.js",
   "author": "srifqi",
