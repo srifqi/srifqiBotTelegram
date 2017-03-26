@@ -10,7 +10,7 @@ console.log('Initialising bot...')
 const Telegraf = require('telegraf')
 const math = require('mathjs')
 const express = require('express')
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 80
 
 const server = express()
 const httpserver = server.listen(PORT)

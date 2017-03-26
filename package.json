@@ -1,28 +1,25 @@
 {
   "name": "srifqiBot",
-  "version": "0.1.0",
+  "version": "0.1",
   "description": "srifqi's Bot for Telegram App",
   "main": "bot.js",
-  "scripts": {
-    "test": "echo \"Just assume it's okay\" && exit 1",
-    "preinstall": "rm -rf node_modules && npm cache clean",
-    "heroku-prebuild": "rm -rf node_modules && npm cache clean",
-	"start": "node bot.js"
-  },
-  "keywords": [
-    "srifqi",
-    "srifqiBot",
-    "Telegram"
-  ],
   "author": "srifqi",
-  "license": "MIT License",
-  "engines": {
-    "node": "7.2.1",
-    "npm": "3.10.10"
-  },
+  "license": "MIT",
   "dependencies": {
-    "telegraf": "3.6.7",
+    "telegraf": "^3.6.7",
     "mathjs": "^3.10.0",
     "express": "^4.15.2"
+  },
+  "engines": {
+    "node": "*",
+    "npm": "*"
+  },
+  "scripts": {
+    "test": "echo \"Just assume it's okay\" && exit 1",
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/srifqi/srifqiBotTelegram.git"
   }
 }
