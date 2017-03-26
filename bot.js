@@ -81,7 +81,7 @@ var botRollDice = (msg) => {
     return
   }
   var result = ''
-  for (let i = 0; i < amount; i++) {
+  for (var i = 0; i < amount; i++) {
     result += (i < 1 ? '' : ' ') + Math.ceil(Math.random() * 6)
   }
   app.sendMessage(msg.chat.id, result)
@@ -98,7 +98,7 @@ var botTossCoin = (msg) => {
     return
   }
   var result = ''
-  for (let i = 0; i < amount; i++) {
+  for (var i = 0; i < amount; i++) {
     result += (i < 1 ? '' : ' ') +
         ['head', 'tail'][Math.ceil(Math.random() * 2) - 1]
   }
