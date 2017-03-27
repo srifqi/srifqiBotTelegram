@@ -7,8 +7,11 @@ console.log("srifqi's Bot for Telegram")
 console.log('License: MIT License')
 console.log('Initialising bot...')
 
+const BOT_NAME = 'srifqiBot'
+
 const TelegramBot = require('node-telegram-bot-api')
 const math = require('mathjs')
+const fetch = require('node-fetch')
 const express = require('express')
 const PORT = process.env.PORT || 80
 
@@ -29,6 +32,7 @@ const ABOUT = '@srifqiBot\n' +
 about - About this bot
 calc - Do simple math calculation
 help - Display command list
+nameplease - Give random name
 rolldice - Roll a or n dice
 tosscoin - Toss a or n coin(s)
  */
@@ -36,6 +40,7 @@ const HELP = 'Below is a list of my commands:\n' +
   '/about - About this bot\n' +
   '/calc <expr> - Do simple math calculation\n' +
   '/help - Display command list\n' +
+  '/nameplease - Give random name\n' +
   '/rolldice - Roll a dice\n' +
   '/rolldice <n> - Roll n dice\n' +
   '/tosscoin - Toss a coin\n' +
@@ -56,10 +61,10 @@ var botHelp = (msg) => {
 }
 
 var botCalc = (msg) => {
-  if (/\/calc(?:@srifqiBot)?\s+(\S.*)/i.test(msg.text)) {
+  if (new RegExp('/calc(?:@' + BOT_NAME + ')?\\s+(\\S.*)', 'i').test(msg.text)) {
     var result = ''
     try {
-      result = math.eval(/\/calc(?:@srifqiBot)?\s+(\S.*)/i.exec(msg.text)[1])
+      result = math.eval(new RegExp('/calc(?:@' + BOT_NAME + ')?\\s+(\\S.*)', 'i').exec(msg.text)[1])
     } catch (e) {
       result = 'ERROR when processing formula.'
     }
@@ -71,11 +76,12 @@ var botCalc = (msg) => {
 }
 
 var botRollDice = (msg) => {
-  if (/\/rolldice(?:@srifqiBot)?\s+(.+)/i.test(msg.text)) {
-    amount = Number(/\/rolldice(?:@srifqiBot)?\s+(.+)/i.exec(msg.text)[1])
-  } else {
-    amount = 1
+  var amount = 1
+  if (new RegExp('/rolldice(?:@' + BOT_NAME + ')?\\s+(.+)', 'i').test(msg.text)) {
+    amount = Number(new RegExp('/rolldice(?:@' + BOT_NAME + ')?\\s+(.+)', 'i').exec(msg.text)[1])
   }
+  if (isNaN(amount))
+    amount = 1
   if (amount > 100) {
     app.sendMessage(msg.chat.id, 'Amount of dice is too large. Maximum amount is 100.')
     return
@@ -84,15 +90,16 @@ var botRollDice = (msg) => {
   for (var i = 0; i < amount; i++) {
     result += (i < 1 ? '' : ' ') + Math.ceil(Math.random() * 6)
   }
-  app.sendMessage(msg.chat.id, result)
+  app.sendMessage(msg.chat.id, result, {reply_to_message_id: msg.message_id})
 }
 
 var botTossCoin = (msg) => {
-  if (/\/tosscoin(?:@srifqiBot)?\s+(.+)/i.test(msg.text)) {
-    amount = Number(/\/tosscoin(?:@srifqiBot)?\s+(.+)/i.exec(msg.text)[1])
-  } else {
-    amount = 1
+  var amount = 1
+  if (new RegExp('/tosscoin(?:@' + BOT_NAME + ')?\\s+(.+)', 'i').test(msg.text)) {
+    amount = Number(new RegExp('/tosscoin(?:@' + BOT_NAME + ')?\\s+(.+)', 'i').exec(msg.text)[1])
   }
+  if (isNaN(amount))
+    amount = 1
   if (amount > 100) {
     app.sendMessage(msg.chat.id, 'Amount of coin is too large. Maximum amount is 100.')
     return
@@ -102,28 +109,41 @@ var botTossCoin = (msg) => {
     result += (i < 1 ? '' : ' ') +
         ['head', 'tail'][Math.ceil(Math.random() * 2) - 1]
   }
-  app.sendMessage(msg.chat.id, result)
+  app.sendMessage(msg.chat.id, result, {reply_to_message_id: msg.message_id})
 }
 
-app.onText(/\/start/, botStart)
-app.onText(/\/about/, botAbout)
-app.onText(/\/help/, botHelp)
+var botRandomName = (msg) => {
+  fetch('https://randomuser.me/api/?inc=name&noinfo')
+    .then((res) => {
+      return res.json()
+    })
+    .then((json) => {
+      var name = json.results[0].name.first + " " + json.results[0].name.last
+	  app.sendMessage(msg.chat.id, name, {reply_to_message_id: msg.message_id})
+    })
+}
 
-app.onText(/\/calc(?: (.+)?)?/, botCalc)
+app.onText(/\/start/i, botStart)
+app.onText(/\/about/i, botAbout)
+app.onText(/\/help/i,  botHelp)
 
-app.onText(/\/rolldice(?: (.+)?)?/, botRollDice)
-app.onText(/\/tosscoin(?: (.+)?)?/, botTossCoin)
+app.onText(new RegExp('/calc(?:@' + BOT_NAME + ')?(?: (.+)?)?', 'i'),  botCalc)
 
-app.onText(/@srifqiBot/, (msg) => app.sendMessage(msg.chat.id, 'Hey!'))
+app.onText(new RegExp('/rolldice(?:@' + BOT_NAME + ')?(?: (.+)?)?', 'i'), botRollDice)
+app.onText(new RegExp('/tosscoin(?:@' + BOT_NAME + ')?(?: (.+)?)?', 'i'), botTossCoin)
+app.onText(/\/nameplease/i, botRandomName)
+app.onText(/\/nameplz/i, botRandomName) // This one is synonym as above.
+
+app.onText(new RegExp('@' + BOT_NAME + '\\b', 'i'), (msg) => app.sendMessage(msg.chat.id, 'Hey!'))
 
 // logging | botCalc
 app.onText(/.*/i, (msg) => {
   console.log(msg.from.username || '', ':', msg.text)
   if (msg.hasOwnProperty('reply_to_message')) {
-    if (msg.reply_to_message.from.username === 'srifqiBot' &&
+    if (msg.reply_to_message.from.username === BOT_NAME &&
         msg.reply_to_message.hasOwnProperty('text')) {
       if (msg.reply_to_message.text.substr(0, 4) === '[CA]') {
-        msg.text = '/calc@srifqiBot ' + msg.text
+        msg.text = '/calc@' + BOT_NAME + ' ' + msg.text
         botCalc(msg)
       }
     }
