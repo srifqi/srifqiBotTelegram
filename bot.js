@@ -22,7 +22,7 @@ server.use(express.static('./public/'))
 
 const app = new TelegramBot(process.env.BOT_TOKEN, {polling: true})
 
-// Using Markdown
+// Using Markdown.
 const ABOUT = '@srifqiBot\n' +
   "srifqi's Bot on Telegram\n" +
   'License: MIT License\n\n' +
@@ -47,7 +47,6 @@ const HELP = 'Below is a list of my commands:\n' +
   '/tosscoin <n> - Toss n coins'
 
 var botStart = (msg) => {
-  // console.log('start', msg.from)
   app.sendMessage(msg.chat.id, 'Welcome!')
   app.sendMessage(msg.chat.id, HELP)
 }
@@ -134,11 +133,9 @@ app.onText(new RegExp('/tosscoin(?:@' + BOT_NAME + ')?(?: (.+)?)?', 'i'), botTos
 app.onText(/\/nameplease/i, botRandomName)
 app.onText(/\/nameplz/i, botRandomName) // This one is synonym as above.
 
-app.onText(new RegExp('@' + BOT_NAME + '\\b', 'i'), (msg) => app.sendMessage(msg.chat.id, 'Hey!'))
-
 // logging | botCalc
 app.onText(/.*/i, (msg) => {
-  console.log(msg.from.username || '', ':', msg.text)
+  console.log(msg.from.username || '', ':', msg.text) // Chat log in console.
   if (msg.hasOwnProperty('reply_to_message')) {
     if (msg.reply_to_message.from.username === BOT_NAME &&
         msg.reply_to_message.hasOwnProperty('text')) {
@@ -153,5 +150,3 @@ app.onText(/.*/i, (msg) => {
 app.on('sticker', (msg) => app.sendMessage(msg.chat.id, '👍'))
 
 console.log('Bot started.')
-
-// setInterval(() => console.log(Date.now()), 1e4)
